@@ -1,0 +1,111 @@
+.TH HSH 1 "2026-05-12" "simple_shell"
+
+.SH NAME
+hsh \- simple UNIX command interpreter
+
+.SH SYNOPSIS
+.B hsh
+
+.SH DESCRIPTION
+.B hsh
+is a simple UNIX command line interpreter written in C.
+
+The shell displays a prompt and waits for the user to enter a command.
+Commands are executed using
+.BR execve (2).
+
+The shell supports both interactive and noninteractive modes.
+
+.PP
+The shell can:
+.IP \[bu] 2
+Display a prompt and read user input.
+.IP \[bu] 2
+Execute commands with arguments.
+.IP \[bu] 2
+Search for executable files using the
+.B PATH
+environment variable.
+.IP \[bu] 2
+Handle errors.
+.IP \[bu] 2
+Handle the end-of-file condition
+.RB ( Ctrl\-D ).
+.IP \[bu] 2
+Execute the built-in commands
+.B exit
+and
+.B env.
+
+.SS Command execution
+When a command is entered, the shell:
+.IP (1) 3
+Reads the input line.
+.IP (2) 3
+Parses the command into tokens.
+.IP (3) 3
+Searches for the command in
+.B PATH.
+.IP (4) 3
+Creates a child process using
+.BR fork (2).
+.IP (5) 3
+Executes the command using
+.BR execve (2).
+.IP (6) 3
+Waits for the child process to terminate using
+.BR wait (2).
+
+.SH BUILTIN COMMANDS
+.TP
+.B exit
+Exit the shell.
+
+.TP
+.B env
+Print the current environment variables.
+
+.SH ENVIRONMENT
+.TP
+.B PATH
+A colon-separated list of directories used to locate executable programs.
+
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Error (command not found or execution failure).
+
+.SH EXAMPLES
+Interactive mode:
+.PP
+.in +4n
+.EX
+$ ./hsh
+$ ls
+$ main.c shell.c
+$ env
+$ exit
+.EE
+.in
+
+Noninteractive mode:
+.PP
+.in +4n
+.EX
+$ echo "/bin/ls" | ./hsh
+$ main.c shell.c
+.EE
+.in
+
+.SH BUGS
+The shell does not support pipes, redirections, command chaining,
+or special characters.
+
+.SH SEE ALSO
+.BR sh (1),
+.BR execve (2),
+.BR fork (2),
+.BR wait (2)
