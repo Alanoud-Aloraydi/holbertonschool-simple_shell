@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * main - Entry point for the simple shell.
+ * main - UNIX command line interpreter that handles arguments.
  * @ac: Argument count.
  * @av: Argument vector.
  *
@@ -9,13 +9,12 @@
  */
 int main(int ac, char **av)
 {
-	char *line = NULL;
+	char *line = NULL, *token;
 	size_t len = 0;
 	ssize_t nread;
-	char *cmd;
+	char *args[1024]; /* Array to store command and arguments */
+	int i, status;
 	pid_t child_pid;
-	int status;
-	char *args[2];
 
 	(void)ac;
 	while (1)
@@ -23,24 +22,30 @@ int main(int ac, char **av)
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
 		nread = getline(&line, &len, stdin);
-		if (nread == -1) 
+		if (nread == -1)
 		{
 			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			free(line);
 			exit(EXIT_SUCCESS);
 		}
-		cmd = strtok(line, " \n\t\r"); 
-		if (cmd == NULL)
+		/* Tokenize input into args array */
+		i = 0;
+		token = strtok(line, " \n\t\r");
+		while (token != NULL)
+		{
+			args[i++] = token;
+			token = strtok(NULL, " \n\t\r");
+		}
+		args[i] = NULL;
+		if (args[0] == NULL)
 			continue;
 		child_pid = fork();
 		if (child_pid == 0)
 		{
-			args[0] = cmd;
-			args[1] = NULL;
 			if (execve(args[0], args, environ) == -1)
 			{
-				perror(av[0]); 
+				perror(av[0]);
 				exit(EXIT_FAILURE);
 			}
 		}
