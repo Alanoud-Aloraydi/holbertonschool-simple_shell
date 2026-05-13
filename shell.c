@@ -65,7 +65,7 @@ int main(int ac, char **av)
 		}
 		if (strcmp(args[0], "cd") == 0)
 		{
-    			last_status = builtin_cd(args, av[0]);
+    			last_status = builtin_cd(args, av[0], line_count);
     			line_count++;
     			continue;
 		}
