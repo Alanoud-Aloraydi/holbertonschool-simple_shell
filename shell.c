@@ -44,7 +44,11 @@ int main(int ac, char **av)
 		cmd = get_path(args[0]);
 
                 if (cmd == NULL)
+		{
+			if (isatty(STDIN_FILENO))
+				write(STDOUT_FILENO, "#cisfun$ ", 9);
          		continue;
+		}
 		child_pid = fork();
 		if (child_pid == 0)
 		{

@@ -8,35 +8,48 @@
  */
 char *get_path(char *command)
 {
-	char *path_env, *path_copy, *token;
-	static char full_path[1024];
+    char *path_env, *path_copy, *token;
+    static char full_path[1024];
+    int i;
 
-	if (access(command, X_OK) == 0)
-		return (command);
+    if (access(command, X_OK) == 0)
+        return (command);
 
-	path_env = getenv("PATH");
+    path_env = NULL;
+    i = 0;
 
-	if (path_env == NULL)
-		return (NULL);
+    while (environ[i])
+    {
+        if (strncmp(environ[i], "PATH=", 5) == 0)
+        {
+            path_env = environ[i] + 5;
+            break;
+        }
+        i++;
+    }
 
-	path_copy = strdup(path_env);
+    if (path_env == NULL)
+        return (NULL);
 
-	token = strtok(path_copy, ":");
+    path_copy = strdup(path_env);
+    if (!path_copy)
+        return (NULL);
 
-	while (token != NULL)
-	{
-		sprintf(full_path, "%s/%s", token, command);
+    token = strtok(path_copy, ":");
 
-		if (access(full_path, X_OK) == 0)
-		{
-			free(path_copy);
-			return (full_path);
-		}
+    while (token)
+    {
+        sprintf(full_path, "%s/%s", token, command);
 
-		token = strtok(NULL, ":");
-	}
+        if (access(full_path, X_OK) == 0)
+        {
+            free(path_copy);
+            return (full_path);
+        }
 
-	free(path_copy);
+        token = strtok(NULL, ":");
+    }
 
-	return (NULL);
+    free(path_copy);
+    return (NULL);
 }
