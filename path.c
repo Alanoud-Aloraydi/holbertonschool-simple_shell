@@ -12,6 +12,9 @@ char *get_path(char *command)
 	static char full_path[1024];
 	int i;
 
+	if (!command)
+		return (NULL);
+
 	if (access(command, X_OK) == 0)
 		return (command);
 
@@ -28,17 +31,16 @@ char *get_path(char *command)
 		i++;
 	}
 
-	if (path_env == NULL)
+	if (!path_env || path_env[0] == '\0')
 		return (NULL);
 
 	path_copy = strdup(path_env);
-
-	if (path_copy == NULL)
+	if (!path_copy)
 		return (NULL);
 
 	token = strtok(path_copy, ":");
 
-	while (token != NULL)
+	while (token)
 	{
 		sprintf(full_path, "%s/%s", token, command);
 
@@ -47,7 +49,6 @@ char *get_path(char *command)
 			free(path_copy);
 			return (full_path);
 		}
-
 		token = strtok(NULL, ":");
 	}
 
