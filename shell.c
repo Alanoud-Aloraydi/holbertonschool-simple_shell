@@ -63,7 +63,12 @@ int main(int ac, char **av)
     			free(line);
     			exit(last_status);
 		}
-
+		if (strcmp(args[0], "cd") == 0)
+		{
+    			last_status = builtin_cd(args, av[0]);
+    			line_count++;
+    			continue;
+		}
 
 		if (strchr(args[0], '/'))
 			cmd = args[0];

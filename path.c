@@ -15,9 +15,6 @@ char *get_path(char *command)
 	if (!command)
 		return (NULL);
 
-	if (access(command, X_OK) == 0)
-		return (command);
-
 	path_env = NULL;
 	i = 0;
 
