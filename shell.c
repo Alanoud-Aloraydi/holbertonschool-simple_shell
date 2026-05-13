@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * main - Entry point for a simple UNIX command line interpreter.
+ * main - Entry point for the simple shell.
  * @ac: Argument count.
  * @av: Argument vector.
  *
@@ -12,6 +12,7 @@ int main(int ac, char **av)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t nread;
+	char *cmd;
 	pid_t child_pid;
 	int status;
 	char *args[2];
@@ -20,28 +21,28 @@ int main(int ac, char **av)
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
-			printf("#cisfun$ ");
+			write(STDOUT_FILENO, "#cisfun$ ", 9);
 		nread = getline(&line, &len, stdin);
-		if (nread == -1) /* Handle EOF (Ctrl+D) */
+		if (nread == -1) 
 		{
+			if (isatty(STDIN_FILENO))
+				write(STDOUT_FILENO, "\n", 1);
 			free(line);
 			exit(EXIT_SUCCESS);
 		}
-		if (line[nread - 1] == '\n')
-			line[nread - 1] = '\0';
-		child_pid = fork();
-		if (child_pid == -1)
-		{
-			perror("Error");
+		cmd = strtok(line, " \n\t\r"); 
+		if (cmd == NULL)
 			continue;
-		}
+		child_pid = fork();
 		if (child_pid == 0)
 		{
-			args[0] = line;
+			args[0] = cmd;
 			args[1] = NULL;
 			if (execve(args[0], args, environ) == -1)
-				perror(av[0]);
-			exit(EXIT_FAILURE);
+			{
+				perror(av[0]); 
+				exit(EXIT_FAILURE);
+			}
 		}
 		else
 			wait(&status);
