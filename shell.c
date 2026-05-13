@@ -13,6 +13,7 @@ int main(int ac, char **av)
 	size_t len = 0;
 	ssize_t nread;
 	char *args[1024]; /* Array to store command and arguments */
+	char *cmd;
 	int i, status;
 	pid_t child_pid;
 
@@ -40,10 +41,14 @@ int main(int ac, char **av)
 		args[i] = NULL;
 		if (args[0] == NULL)
 			continue;
+		cmd = get_path(args[0]);
+
+                if (cmd == NULL)
+         		continue;
 		child_pid = fork();
 		if (child_pid == 0)
 		{
-			if (execve(args[0], args, environ) == -1)
+			if (execve(cmd, args, environ) == -1)
 			{
 				perror(av[0]);
 				exit(EXIT_FAILURE);

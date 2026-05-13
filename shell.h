@@ -12,5 +12,6 @@
 extern char **environ;
 
 int main(int ac, char **av);
+char *get_path(char *command);
 
 #endif /* SHELL_H */
