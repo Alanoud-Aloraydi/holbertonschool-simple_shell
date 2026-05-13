@@ -13,5 +13,5 @@ extern char **environ;
 
 int main(int ac, char **av);
 char *get_path(char *command);
-
+void handle_ctrl_c(int sig);
 #endif /* SHELL_H */

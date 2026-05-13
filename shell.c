@@ -1,12 +1,23 @@
 #include "shell.h"
 
 /**
+ * handle_ctrl_c - handles Ctrl+C signal
+ * @sig: signal number
+ */
+void handle_ctrl_c(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "\n#cisfun$ ", 10);
+}
+
+/**
  * main - UNIX command line interpreter that handles arguments.
  * @ac: Argument count.
  * @av: Argument vector.
  *
  * Return: Always 0.
  */
+
 int main(int ac, char **av)
 {
 	char *line = NULL, *token;
@@ -18,6 +29,8 @@ int main(int ac, char **av)
 	pid_t child_pid;
 
 	(void)ac;
+	signal(SIGINT, handle_ctrl_c);
+
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
@@ -44,11 +57,7 @@ int main(int ac, char **av)
 		cmd = get_path(args[0]);
 
                 if (cmd == NULL)
-		{
-			if (isatty(STDIN_FILENO))
-				write(STDOUT_FILENO, "#cisfun$ ", 9);
-         		continue;
-		}
+			continue;
 		child_pid = fork();
 		if (child_pid == 0)
 		{
