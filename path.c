@@ -10,24 +10,11 @@ char *get_path(char *command)
 {
 	char *path_env, *path_copy, *token;
 	static char full_path[1024];
-	int i;
 
 	if (!command)
 		return (NULL);
 
-	path_env = NULL;
-	i = 0;
-
-	while (environ[i])
-	{
-		if (strncmp(environ[i], "PATH=", 5) == 0)
-		{
-			path_env = environ[i] + 5;
-			break;
-		}
-		i++;
-	}
-
+	path_env = get_env_value("PATH");
 	if (!path_env || path_env[0] == '\0')
 		return (NULL);
 
@@ -36,11 +23,9 @@ char *get_path(char *command)
 		return (NULL);
 
 	token = strtok(path_copy, ":");
-
 	while (token)
 	{
 		sprintf(full_path, "%s/%s", token, command);
-
 		if (access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
@@ -52,3 +37,4 @@ char *get_path(char *command)
 	free(path_copy);
 	return (NULL);
 }
+

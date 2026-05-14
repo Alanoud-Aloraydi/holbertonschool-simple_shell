@@ -26,7 +26,7 @@ int main(int ac, char **av)
 	char *args[1024];
 	char *cmd;
 	int i, status;
-	int last_status = 0; 
+	int last_status = 0;
 	int line_count = 1;
 	pid_t child_pid;
 
@@ -44,6 +44,7 @@ int main(int ac, char **av)
 			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			free(line);
+			free_env_allocs();
 			exit(last_status);
 		}
 
@@ -61,6 +62,7 @@ int main(int ac, char **av)
 		if (strcmp(args[0], "exit") == 0)
 		{
     			free(line);
+			free_env_allocs();
     			exit(last_status);
 		}
 		if (strcmp(args[0], "cd") == 0)
@@ -78,7 +80,7 @@ int main(int ac, char **av)
 		if (cmd == NULL)
 		{
 			fprintf(stderr, "%s: %d: %s: not found\n", av[0], line_count, args[0]);
-			last_status = 127;   
+			last_status = 127;
 			line_count++;
 			continue;
 		}
@@ -93,11 +95,12 @@ int main(int ac, char **av)
 		{
 			wait(&status);
 			if (WIFEXITED(status))
-				last_status = WEXITSTATUS(status);  
+				last_status = WEXITSTATUS(status);
 		}
 		line_count++;
 	}
 
 	free(line);
+	free_env_allocs();
 	return (last_status);
 }

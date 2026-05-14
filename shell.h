@@ -16,6 +16,7 @@ char *get_path(char *command);
 void handle_ctrl_c(int sig);
 void free_env_allocs(void);
 void update_env(char *name, char *value);
+char *get_env_value(char *name);
 int builtin_cd(char **args, char *av0, int line_count);
 
 #endif /* SHELL_H */
