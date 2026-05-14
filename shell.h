@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -18,5 +19,6 @@ void free_env_allocs(void);
 void update_env(char *name, char *value);
 char *get_env_value(char *name);
 int builtin_cd(char **args, char *av0, int line_count);
+void builtin_env(void);
 
 #endif /* SHELL_H */

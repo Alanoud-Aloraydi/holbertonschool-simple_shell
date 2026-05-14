@@ -18,6 +18,15 @@ void free_env_allocs(void)
 	g_env_count = 0;
 	g_env_table = NULL;
 }
+/**
+ * builtin_env - prints all environment variables
+ */
+void builtin_env(void)
+{
+	int i;
+	for (i = 0; environ[i]; i++)
+		printf("%s\n", environ[i]);
+}
 
 /**
  * get_env_value - gets an environment variable value

@@ -61,9 +61,17 @@ int main(int ac, char **av)
 			continue;
 		if (strcmp(args[0], "exit") == 0)
 		{
+			if (args[1] != NULL)
+				last_status = atoi(args[1]);
     			free(line);
 			free_env_allocs();
     			exit(last_status);
+		}
+		if (strcmp(args[0], "env") == 0)
+		{
+			builtin_env();
+			line_count++;
+			continue;
 		}
 		if (strcmp(args[0], "cd") == 0)
 		{
