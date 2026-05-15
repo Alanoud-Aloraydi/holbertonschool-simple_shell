@@ -11,6 +11,22 @@ void handle_ctrl_c(int sig)
 }
 
 /**
+ * builtin_cd - Placeholder for custom directory changer logic.
+ * @args: Command argument tokens vector.
+ * @av0: Execution engine name string.
+ * @line_count: The line prompt iteration metric.
+ *
+ * Return: Status code value.
+ */
+int builtin_cd(char **args, char *av0, int line_count)
+{
+	(void)args;
+	(void)av0;
+	(void)line_count;
+	return (0);
+}
+
+/**
  * main - UNIX command line interpreter supporting arguments and built-ins.
  * @ac: Argument count.
  * @av: Argument vector.
@@ -108,4 +124,4 @@ int main(int ac, char **av)
 	free(line);
 	free_env_allocs();
 	return (last_status);
-}
+}i
