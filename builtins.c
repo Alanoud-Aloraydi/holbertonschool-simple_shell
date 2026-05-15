@@ -1,89 +1,39 @@
 #include "shell.h"
 
 /**
- * cd_target - gets cd target directory
- * @args: argument array
- * @av0: program name
- * @line_count: current line number
- * @is_dash: cd dash flag
+ * handle_builtins - Matches and dispatches shell built-in commands.
+ * @args: Tokenized argument vectors.
+ * @line: The raw buffer from getline to free upon exit.
+ * @av0: The program execution name (argv[0]) for cd error routing.
+ * @line_count: The shell loop execution counter.
  *
- * Return: directory or NULL
+ * Return: 1 if a built-in was matched and handled, 0 otherwise.
  */
-static char *cd_target(char **args, char *av0, int line_count, int *is_dash)
+int handle_builtins(char **args, char *line, char *av0, int line_count)
 {
-	char *dir;
+	if (args[0] == NULL)
+		return (0);
 
-	*is_dash = 0;
-	if (args[1] == NULL)
+
+	if (strcmp(args[0], "exit") == 0)
 	{
-		dir = get_env_value("HOME");
-		if (!dir)
-			fprintf(stderr, "%s: %d: cd: HOME not set\n",
-				av0, line_count);
-		return (dir);
+		free(line);
+		free_env_allocs(); 
+		exit(EXIT_SUCCESS);
 	}
 
-	if (strcmp(args[1], "-") == 0)
+	if (strcmp(args[0], "env") == 0)
 	{
-		dir = get_env_value("OLDPWD");
-		if (!dir)
-			fprintf(stderr, "%s: %d: cd: OLDPWD not set\n",
-				av0, line_count);
-		*is_dash = 1;
-		return (dir);
-	}
-
-	return (args[1]);
-}
-
-/**
- * finish_cd - updates PWD and OLDPWD
- * @oldpwd: previous working directory
- * @is_dash: cd dash flag
- */
-static void finish_cd(char *oldpwd, int is_dash)
-{
-	char cwd[1024];
-
-	update_env("OLDPWD", oldpwd);
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-	{
-		update_env("PWD", cwd);
-		if (is_dash)
-			printf("%s\n", cwd);
-	}
-}
-
-/**
- * builtin_cd - changes current directory
- * @args: argument array
- * @av0: program name
- * @line_count: current line number
- *
- * Return: 0 on success, 1 on failure
- */
-int builtin_cd(char **args, char *av0, int line_count)
-{
-	char *dir, oldpwd[1024];
-	int is_dash;
-
-	if (getcwd(oldpwd, sizeof(oldpwd)) == NULL)
-		return (1);
-
-	/* Changed: handles HOME and OLDPWD through cd_target */
-	dir = cd_target(args, av0, line_count, &is_dash);
-	if (!dir)
-		return (1);
-
-	if (chdir(dir) == -1)
-	{
-		fprintf(stderr, "%s: %d: cd: can't cd to %s\n",
-			av0, line_count, dir);
+		builtin_env();
 		return (1);
 	}
 
-	/* Changed: updates PWD and OLDPWD after successful cd */
-	finish_cd(oldpwd, is_dash);
+
+	if (strcmp(args[0], "cd") == 0)
+	{
+		builtin_cd(args, av0, line_count);
+		return (1);
+	}
+
 	return (0);
 }
-
