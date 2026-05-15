@@ -9,9 +9,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/* environment variable */
+/* Environment array matrix */
 extern char **environ;
 
+/* Function prototypes */
 int main(int ac, char **av);
 char *get_path(char *command);
 void handle_ctrl_c(int sig);

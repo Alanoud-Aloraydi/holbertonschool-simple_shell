@@ -11,11 +11,11 @@ void handle_ctrl_c(int sig)
 }
 
 /**
- * main - UNIX command line interpreter that handles arguments cleanly.
+ * main - UNIX command line interpreter supporting arguments and built-ins.
  * @ac: Argument count.
  * @av: Argument vector.
  *
- * Return: Last execution status code.
+ * Return: Last exit status code value.
  */
 int main(int ac, char **av)
 {
